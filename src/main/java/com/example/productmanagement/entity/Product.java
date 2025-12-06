@@ -1,8 +1,9 @@
 package com.example.productmanagement.entity;
-
+import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "products")
@@ -12,19 +13,25 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "product_code", unique = true, nullable = false, length = 20)
+    @NotBlank(message = "Product code is required")
+    @Size(min = 3, max = 20, message = "Product code must be 3-20 characters")
+    @Pattern(regexp = "^P\\d{3,}$", message = "Product code must start with P followed by numbers")
     private String productCode;
     
-    @Column(nullable = false, length = 100)
+    @NotBlank(message = "Product name is required")
+    @Size(min = 3, max = 100, message = "Name must be 3-100 characters")
     private String name;
     
-    @Column(nullable = false, precision = 10, scale = 2)
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.01", message = "Price must be greater than 0")
+    @DecimalMax(value = "999999.99", message = "Price is too high")
     private BigDecimal price;
     
-    @Column(nullable = false)
+    @NotNull(message = "Quantity is required")
+    @Min(value = 0, message = "Quantity cannot be negative")
     private Integer quantity;
     
-    @Column(length = 50)
+    @NotBlank(message = "Category is required")
     private String category;
     
     @Column(columnDefinition = "TEXT")
@@ -32,6 +39,9 @@ public class Product {
     
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "image_path")
+private String imagePath;
     
     // Constructors
     public Product() {
@@ -116,6 +126,14 @@ public class Product {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+    public String getImagePath() {
+    return imagePath;
+}
+
+public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
+}
+
     
     @Override
     public String toString() {

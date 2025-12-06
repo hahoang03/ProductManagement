@@ -5,7 +5,13 @@ import com.example.productmanagement.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import org.springframework.data.domain.Sort;
+
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,4 +56,34 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategory(category);
     }
+
+    //  Implement tìm kiếm nâng cao
+    @Override
+    public List<Product> searchProductsAdvanced(String name, String category, BigDecimal minPrice, BigDecimal maxPrice) {
+
+        // Chuyển chuỗi rỗng thành null để query không bị lỗi
+        if (name != null && name.isBlank()) name = null;
+        if (category != null && category.isBlank()) category = null;
+
+        return productRepository.searchProducts(name, category, minPrice, maxPrice);
+    }
+
+    @Override
+public List<String> getAllCategories() {
+    return productRepository.findAllCategories();
+}
+@Override
+public Page<Product> searchProducts(String keyword, Pageable pageable) {
+    return productRepository.findByNameContaining(keyword, pageable);
+}
+
+@Override
+public List<Product> getAllProducts(Sort sort) {
+    return productRepository.findAll(sort);
+}
+
+
+
+
+
 }

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7ff;
+            padding: 20px;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #5567dd;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #eef1ff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            border-left: 5px solid #667eea;
+        }
+        .section {
+            margin-top: 30px;
+        }
+        h2 {
+            color: #444;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        .low-stock {
+            color: red;
+            font-weight: bold;
+        }
+        ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Dashboard Overview</h1>
+
+    <!-- STATS SUMMARY -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <strong>Total Products</strong>
+            <div th:text="${totalProducts}"></div>
+        </div>
+
+        <div class="stat-card">
+            <strong>Total Categories</strong>
+            <div th:text="${totalCategories}"></div>
+        </div>
+
+        <div class="stat-card">
+            <strong>Total Inventory Value</strong>
+            <div>$<span th:text="${totalInventoryValue}"></span></div>
+        </div>
+
+        <div class="stat-card">
+            <strong>Average Price</strong>
+            <div>$<span th:text="${averagePrice}"></span></div>
+        </div>
+
+    </div>
+
+    <!-- PRODUCTS BY CATEGORY -->
+    <div class="section">
+        <h2>Products by Category</h2>
+        <ul>
+            <li th:each="entry : ${productsByCategory}">
+                <span th:text="${entry.key}"></span> :
+                <strong th:text="${entry.value}"></strong> products
+            </li>
+        </ul>
+    </div>
+
+    <!-- LOW STOCK ALERT -->
+    <div class="section">
+        <h2> Low Stock Alerts (Qty < 10)</h2>
+
+        <table th:if="${lowStock != null and !lowStock.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Qty</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${lowStock}">
+                <td th:text="${p.name}"></td>
+                <td class="low-stock" th:text="${p.quantity}"></td>
+                <td th:text="${p.price}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p th:if="${lowStock == null or lowStock.isEmpty()}">No low-stock products 🎉</p>
+    </div>
+
+    <!-- RECENT PRODUCTS -->
+    <div class="section">
+        <h2> Recent Products (Last 5 Added)</h2>
+
+        <table th:if="${recentProducts != null and !recentProducts.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${recentProducts}">
+                <td th:text="${p.name}"></td>
+                <td th:text="${p.category}"></td>
+                <td th:text="${p.quantity}"></td>
+                <td th:text="${p.price}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+</body>
+</html>
